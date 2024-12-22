@@ -1,0 +1,60 @@
+cabal-version:  3.4
+name:           colon
+version:        0.1.0.0
+
+common options
+    ghc-options:
+        -Wall
+        -Wno-name-shadowing
+        -Wno-x-partial
+        -Werror=missing-fields
+    default-language:   GHC2024
+    default-extensions:
+        BlockArguments
+        DeriveAnyClass
+        LexicalNegation
+        NoFieldSelectors
+        MonadComprehensions
+        DuplicateRecordFields
+        RecordWildCards
+        MultiWayIf
+
+library
+    import:           options
+    hs-source-dirs:   src
+    exposed-modules:
+        Language.Colon.Syntax
+        Language.Colon.Semantic
+        Language.Colon.Parsing
+    build-depends:
+        base ^>=4.20.0.0,
+        containers,
+        mtl,
+        megaparsec
+
+executable colon
+    import:           options
+    hs-source-dirs:   exe
+    main-is:          Main.hs
+    -- other-modules:
+    build-depends:
+        base ^>=4.20.0.0,
+        colon
+
+test-suite colon-test
+    import:           options
+    ghc-options:
+        -Wno-orphans
+    hs-source-dirs:   test
+    main-is:          Main.hs
+    type:             exitcode-stdio-1.0
+    other-modules:
+        Language.Colon.Semantic.Spec
+    build-depends:
+        base ^>=4.20.0.0,
+        colon,
+        hspec,
+        QuickCheck,
+        transformers,
+        deepseq,
+        filepath

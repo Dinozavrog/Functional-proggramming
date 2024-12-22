@@ -1,0 +1,26 @@
+: to-upper
+  DUP 96 > IF
+    DUP 122 < IF
+      32 -
+    THEN
+  THEN
+;
+
+(stop on Enter or EOF)
+: is-stop?
+  DUP 10 =
+  SWAP 0 =
+  OR
+;
+
+: main-loop
+  KEY
+  DUP is-stop? IF
+    ." \nDone."
+  ELSE
+    to-upper EMIT
+    main-loop
+  THEN
+;
+
+main-loop

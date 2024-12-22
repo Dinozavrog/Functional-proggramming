@@ -1,0 +1,14 @@
+: eq-line
+  SWAP DUP .
+  ." * "
+  SWAP DUP .
+  ." = "
+  * .
+  CR
+;
+
+3 0 DO
+  3 0 DO
+    J I eq-line
+  LOOP
+LOOP

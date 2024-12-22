@@ -1,0 +1,11 @@
+: is-it-zero? 
+    0 = if
+        ." Yes "
+    else
+        ." No "
+    then
+;
+
+0 is-it-zero?
+1 is-it-zero?
+2 is-it-zero?
