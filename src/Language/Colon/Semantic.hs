@@ -286,34 +286,6 @@ builtInCommands = Map.fromList
       value <- pop
       oldValue <- memoryGet pointer
       memorySet pointer (oldValue + value)
-   --Вычитание из значения из памяти на значение из стека результат сохранятся
-  , "-!" ==> do
-      pointer <- popPointer
-      value <- pop
-      oldValue <- memoryGet pointer
-      memorySet pointer (oldValue - value)
-   --Умножение значения из памяти на значение из стека результат сохранятся
-  , "*!" ==> do
-      pointer <- popPointer
-      value <- pop
-      oldValue <- memoryGet pointer
-      memorySet pointer (oldValue * value)
-   --Деление значения из памяти на значение из стека результат сохранятся
-  , "/!" ==> do
-      pointer <- popPointer
-      value <- pop
-      oldValue <- memoryGet pointer
-      when (value == 0) do
-        throwError ThrowDivisionByZero
-      memorySet pointer (oldValue `div` value)
-    --Остаток от деления значение из стека на значение из памяти результат сохранятся
-  , "%!" ==> do
-      pointer <- popPointer
-      value <- pop
-      oldValue <- memoryGet pointer
-      when (value == 0) do
-        throwError ThrowDivisionByZero
-      memorySet pointer (oldValue `rem` value)
   ]
   where
     name ==> action = (caseInsensitiveString name, action)
