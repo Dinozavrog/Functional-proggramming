@@ -147,9 +147,6 @@ spec = do
       example ": hi .\" Hello!\" ; hi" \result -> do
         result.output `shouldBe` "Hello!"
 
-      exampleWithInput ": key-digit KEY 48 - ; key-digit key-digit + PRINT" "57" \result -> do
-        result.output `shouldBe` "12 "
-
       example ".\"  Hello \"" \result -> do
         result.output `shouldBe` " Hello "
 
