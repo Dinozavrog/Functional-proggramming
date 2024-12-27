@@ -9,5 +9,5 @@
 ;
 
 10 0 DO
-  I fact .
+  I fact PRINT
 LOOP

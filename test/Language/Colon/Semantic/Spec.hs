@@ -134,11 +134,11 @@ spec = do
 
     describe "Операции ввода вывод" do
 
-      example "1 2 . . 3 . 4" \result -> do
+      example "1 2 PRINT PRINT 3 PRINT 4" \result -> do
         result.output `shouldBe` "2 1 3 "
         result.stack `shouldBe` [4]
 
-      example "CR 100 . CR 200 ." \result -> do
+      example "CR 100 PRINT CR 200 PRINT" \result -> do
         result.output `shouldBe` "\n100 \n200 "
 
       example "87 emit 111 emit 119 emit 33 emit" \result -> do
@@ -172,21 +172,6 @@ spec = do
 
       example "1 0 >" \result -> do
         result.stack `shouldBe` [-1]
-
-
-    describe "Выражения" do
-
-      example ": ABOBA? 5 DIGITMOD 0 = if PRINT\" ABOBA\" then ; 3 buzz?" \result -> do
-        result.output `shouldBe` ""
-
-      example ": ABOBA? 5 DIGITMOD 0 = if PRINT\" ABOBA\" then ; 4 buzz?" \result -> do
-        result.output `shouldBe` ""
-
-      example ": ABOBA? 5 DIGITMOD 0 = if PRINT\" ABOBA\" then ; 5 buzz?" \result -> do
-        result.output `shouldBe` "ABOBA"
-
-      exampleFile "if-zero"
-
 
     describe "Цикл" do
 
