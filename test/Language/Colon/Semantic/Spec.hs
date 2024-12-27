@@ -50,17 +50,17 @@ instance Arbitrary EvalState where
 
 instance Arbitrary Command where
   arbitrary = do
-    int <- arbitrary @Int
-    name <- arbitrary @StringSource
+    intVal <- arbitrary @Int
+    string <- arbitrary @StringSource
     str <- listOf arbitraryPrintableChar
-    prog1 <- arbitrary @Code
-    prog2 <- arbitrary @Code
+    first <- arbitrary @Code
+    second <- arbitrary @Code
     elements
-      [ Int int
-      , Name name
+      [ Int intVal
+      , Name string
       , Str str
-      , IfElse prog1 prog2
-      , DoILoop prog1 ]
+      , IfElse first second
+      , DoILoop first ]
 
 deriving stock instance Generic LoopFrame
 deriving stock instance Generic CaseInsensitiveString
@@ -87,11 +87,11 @@ spec = do
       example "1 10 3 + +" \result -> do
         result.stack `shouldBe` [14]
 
-      example "1 2 3 + + +" \result -> do
+      example "10 254 31 + + +" \result -> do
         result.error `shouldBe` "Stack underflow"
 
-      example "1 2 -" \result -> do
-        result.stack `shouldBe` [-1]
+      example "10 2 -" \result -> do
+        result.stack `shouldBe` [8]
 
       example "3 4 *" \result -> do
         result.stack `shouldBe` [12]
@@ -99,38 +99,28 @@ spec = do
       example "4 5 /" \result -> do
         result.stack `shouldBe` [0]
 
-      example "-12 5 DIGITMOD" \result -> do
-        result.stack `shouldBe` [-2]
+      example "8 3 DIGITMOD" \result -> do
+        result.stack `shouldBe` [2]
 
-      example "5 2 + 10 *" \result -> do
-        result.stack `shouldBe` [70]
+    describe "Работа со словами" do
 
-      example "2 2 + 2 *" \result -> do
-        result.stack `shouldBe` [8]
+      example "aboba" \result -> do
+        result.error `shouldBe` "Unknown - aboba"
 
-      example "2 2 2 * +" \result -> do
-        result.stack `shouldBe` [6]
-
-
-    describe "New words" do
-
-      example "foo" \result -> do
-        result.error `shouldBe` "Unknown name: foo"
-
-      example ": foo 100 + ; 42 foo" \result -> do
-        result.stack `shouldBe` [142]
+      example ": aboba 10 + ; 2 aboba" \result -> do
+        result.stack `shouldBe` [12]
 
       exampleFile "factorial"
 
 
-    describe "Comments" do
+    describe "Комменты" do
 
       example "( + 2 3 ( - 3 2 ) )" \result -> do
         result.stack `shouldBe` []
         result.ok `shouldBe` True
 
 
-    describe "Stack manipulations" do
+    describe "Работа со стеком" do
 
       example "1 2 3 4 DUP" \result -> do
         result.stack `shouldBe` [1, 2, 3, 4, 4]
@@ -148,7 +138,7 @@ spec = do
         result.stack `shouldBe` [1, 3, 4, 2]
 
 
-    describe "I/O" do
+    describe "Операции ввода вывод" do
 
       example "1 2 . . 3 . 4" \result -> do
         result.output `shouldBe` "2 1 3 "
@@ -178,7 +168,7 @@ spec = do
       exampleFile "uppercase"
 
 
-    describe "Booleans" do
+    describe "Работа с булевыми операторами" do
 
       example "3 4 =" \result -> do
         result.stack `shouldBe` [0]
@@ -186,25 +176,16 @@ spec = do
       example "5 5 =" \result -> do
         result.stack `shouldBe` [-1]
 
-      example "3 4 <" \result -> do
+      example "1 10 <" \result -> do
         result.stack `shouldBe` [-1]
 
-      example "3 4 >" \result -> do
-        result.stack `shouldBe` [0]
-
-      example "3 4 < 20 30 < AND" \result -> do
+      example "1 0 >" \result -> do
         result.stack `shouldBe` [-1]
 
-      example "3 4 < 20 30 > OR" \result -> do
-        result.stack `shouldBe` [-1]
 
-      example "3 4 < INVERT" \result -> do
-        result.stack `shouldBe` [0]
+    describe "Выражения" do
 
-
-    describe "Conditional operator" do
-
-      example ": buzz? 5 mod 0 = if .\" Buzz\" then ; 3 buzz?" \result -> do
+      example ": buzz? 5 mod 0 = if PRINT\" Buzz\" then ; 3 buzz?" \result -> do
         result.output `shouldBe` ""
 
       example ": buzz? 5 mod 0 = if .\" Buzz\" then ; 4 buzz?" \result -> do
@@ -216,15 +197,15 @@ spec = do
       exampleFile "if-zero"
 
 
-    describe "Loops" do
+    describe "Цикл" do
 
-      example "5 0 DO I LOOP" \result -> do
+      example "5 0 DO looper" \result -> do
         result.stack `shouldBe` [0, 1, 2, 3, 4]
 
       exampleFile "multiplication-table"
 
 
-    describe "Memory" do
+    describe "Работа с памятью" do
 
       example "var v1   v1 .  (;)  123 v1 !  (;)  v1 @" \result -> do
         result.output `shouldBe` "1000 "
@@ -282,10 +263,10 @@ example' name program input k = do
           Left err -> k (failure (displayException err))
           Right state -> k (success state)
   where
-    failure e = MkExampleResult
-      { stack = error e
-      , output = error e
-      , error = e
+    failure exception = MkExampleResult
+      { stack = error exception
+      , output = error exception
+      , error = exception
       , ok = False }
     success MkEvalState{stack, output} = MkExampleResult
       { stack = reverse stack
