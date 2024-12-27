@@ -74,7 +74,7 @@ parseConditionalThen = do
     thenBranch <- manyTill commandParser (parseKeyword "then")
     pure $ IfElse thenBranch []
 
--- Парсер для цикла "do-loop"
+--Парсер для цикла "do-loop"
 parseLoopStructure :: SimpleParser Command
 parseLoopStructure = do
     parseKeyword "DO"

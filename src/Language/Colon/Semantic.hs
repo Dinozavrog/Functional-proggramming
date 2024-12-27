@@ -71,7 +71,7 @@ instance Exception ThrowException where
     displayException = \case
         ThrowStackUnderFlow -> "Stack underflow"
         ThrowLoopStackUnderFlow -> "Loop stack overflow"
-        ThrowUnknownWord name -> "Unknown word: " ++ name
+        ThrowUnknownWord name -> "Unknown - " ++ name
         ThrowDivisionByZero -> "Division by zero"
         ThrowUnknownMemorySlot pointer -> "Unknown memory slot: " ++ prettyValue pointer
         ThrowInvalidArgument value -> "Invalid argument: " ++ prettyValue value

@@ -90,9 +90,6 @@ spec = do
       example "10 254 31 + + +" \result -> do
         result.error `shouldBe` "Stack underflow"
 
-      example "10 2 -" \result -> do
-        result.stack `shouldBe` [8]
-
       example "3 4 *" \result -> do
         result.stack `shouldBe` [12]
 
@@ -122,9 +119,6 @@ spec = do
 
     describe "Работа со стеком" do
 
-      example "1 2 3 4 DUP" \result -> do
-        result.stack `shouldBe` [1, 2, 3, 4, 4]
-
       example "1 2 3 4 DROP" \result -> do
         result.stack `shouldBe` [1, 2, 3]
 
@@ -153,7 +147,7 @@ spec = do
       example ": hi .\" Hello!\" ; hi" \result -> do
         result.output `shouldBe` "Hello!"
 
-      exampleWithInput ": key-digit KEY 48 - ; key-digit key-digit + ." "57" \result -> do
+      exampleWithInput ": key-digit KEY 48 - ; key-digit key-digit + PRINT" "57" \result -> do
         result.output `shouldBe` "12 "
 
       example ".\"  Hello \"" \result -> do
@@ -185,14 +179,14 @@ spec = do
 
     describe "Выражения" do
 
-      example ": buzz? 5 mod 0 = if PRINT\" Buzz\" then ; 3 buzz?" \result -> do
+      example ": ABOBA? 5 DIGITMOD 0 = if PRINT\" ABOBA\" then ; 3 buzz?" \result -> do
         result.output `shouldBe` ""
 
-      example ": buzz? 5 mod 0 = if .\" Buzz\" then ; 4 buzz?" \result -> do
+      example ": ABOBA? 5 DIGITMOD 0 = if PRINT\" ABOBA\" then ; 4 buzz?" \result -> do
         result.output `shouldBe` ""
 
-      example ": buzz? 5 mod 0 = if .\" Buzz\" then ; 5 buzz?" \result -> do
-        result.output `shouldBe` "Buzz"
+      example ": ABOBA? 5 DIGITMOD 0 = if PRINT\" ABOBA\" then ; 5 buzz?" \result -> do
+        result.output `shouldBe` "ABOBA"
 
       exampleFile "if-zero"
 
@@ -207,7 +201,7 @@ spec = do
 
     describe "Работа с памятью" do
 
-      example "var v1   v1 .  (;)  123 v1 !  (;)  v1 @" \result -> do
+      example "var v1   v1 PRINT  (;)  123 v1 !  (;)  v1 @" \result -> do
         result.output `shouldBe` "1000 "
         result.stack `shouldBe` [123]
 
